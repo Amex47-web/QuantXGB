@@ -1,0 +1,61 @@
+# Feature configuration — PRD §8.
+status: proposed
+
+min_history_sessions: 252        # asset eligible once it has this many daily returns
+
+momentum:
+  return_lookbacks: [5, 10, 20, 60, 120, 252]
+  voladj_lookbacks: [20, 60, 120, 252]
+  skip_month: { long: 252, short: 21 }     # mom_12_1 = TR[t-21] / TR[t-252] - 1
+  xsrank_lookbacks: [20, 60, 120, 252]     # within-date percentile ranks (+ mom_12_1)
+
+volatility:
+  lookbacks: [20, 60, 120]
+  downside_lookback: 60
+  ratio: { short: 20, long: 120 }
+  parkinson_lookback: 20
+
+trend:
+  ema_spans: [20, 50, 200]
+  crossover: { fast: 20, slow: 50 }
+  slope_lookback: 60
+  up_fraction_lookback: 20
+
+liquidity:
+  dollar_volume_lookback: 20
+  volume_z_lookback: 60
+  amihud_lookback: 20
+
+risk:
+  beta_lookbacks: [60, 252]
+  drawdown_lookback: 252
+  max_drawdown_lookback: 120
+  moments_lookback: 60
+
+cross_asset:
+  rel_market_lookbacks: [20, 60, 120]
+  rel_class_lookbacks: [20, 60]
+  corr_lookback: 60
+
+market:
+  avg_corr_lookback: 60
+  trend_sma: 200
+  market_vol_lookback: 20
+
+# Macro features: transforms are applied on each series' observation sequence
+# *within a single vintage* (vintage-consistent), then as-of joined on `available_on`.
+#   level | diff(periods) | pct_change(periods) | pct_rank(periods) | zscore(periods)
+macro:
+  - { name: y10,             series: DGS10,    transform: level }
+  - { name: y10_chg_20,      series: DGS10,    transform: diff,       periods: 20 }
+  - { name: slope_10_2,      series: T10Y2Y,   transform: level }
+  - { name: slope_10_3m,     series: T10Y3M,   transform: level }
+  - { name: credit_spread,   series: BAA10Y,   transform: level }
+  - { name: credit_chg_20,   series: BAA10Y,   transform: diff,       periods: 20 }
+  - { name: vix,             series: VIXCLS,   transform: level }
+  - { name: vix_pct_252,     series: VIXCLS,   transform: pct_rank,   periods: 252 }
+  - { name: fed_funds,       series: DFF,      transform: level }
+  - { name: cpi_yoy,         series: CPIAUCSL, transform: pct_change, periods: 12 }
+  - { name: unrate_chg_3m,   series: UNRATE,   transform: diff,       periods: 3 }
+  - { name: indpro_yoy,      series: INDPRO,   transform: pct_change, periods: 12 }
+  - { name: nfci,            series: NFCI,     transform: level }

@@ -1,0 +1,69 @@
+# Data configuration — PRD §4.2, §7.
+# status: proposed -> the owner must review every value and set `frozen` in Stage 0.
+status: proposed
+
+calendar: XNYS                 # exchange_calendars code used as the master trading calendar
+price_start: 2000-01-01        # download start (pre-2008 data is feature warm-up only)
+price_end: null                # null = up to the latest available session
+
+market_proxy: SPY              # used for beta / relative-return / regime features
+rates_proxy: TLT               # used for corr_tlt_60
+
+# Approximate inception dates are from PRD §4.2 and MUST be verified by the owner
+# against the downloaded data (Stage 1 exit criterion). They are informational only;
+# eligibility is computed from the data itself (features.min_history_sessions).
+universe:
+  - { ticker: SPY, asset_class: equity_us,    description: "S&P 500",                       approx_inception: 1993-01-29 }
+  - { ticker: QQQ, asset_class: equity_us,    description: "Nasdaq-100",                    approx_inception: 1999-03-10 }
+  - { ticker: IWM, asset_class: equity_us,    description: "Russell 2000",                  approx_inception: 2000-05-26 }
+  - { ticker: EFA, asset_class: equity_intl,  description: "MSCI EAFE",                     approx_inception: 2001-08-17 }
+  - { ticker: EEM, asset_class: equity_intl,  description: "MSCI Emerging Markets",         approx_inception: 2003-04-14 }
+  - { ticker: XLF, asset_class: equity_sector, description: "Financials sector",            approx_inception: 1998-12-22 }
+  - { ticker: XLK, asset_class: equity_sector, description: "Technology sector",            approx_inception: 1998-12-22 }
+  - { ticker: XLE, asset_class: equity_sector, description: "Energy sector",                approx_inception: 1998-12-22 }
+  - { ticker: XLV, asset_class: equity_sector, description: "Health care sector",           approx_inception: 1998-12-22 }
+  - { ticker: XLU, asset_class: equity_sector, description: "Utilities sector",             approx_inception: 1998-12-22 }
+  - { ticker: XLP, asset_class: equity_sector, description: "Consumer staples sector",      approx_inception: 1998-12-22 }
+  - { ticker: SHY, asset_class: rates,        description: "1-3Y Treasuries",               approx_inception: 2002-07-30 }
+  - { ticker: IEF, asset_class: rates,        description: "7-10Y Treasuries",              approx_inception: 2002-07-30 }
+  - { ticker: TLT, asset_class: rates,        description: "20Y+ Treasuries",               approx_inception: 2002-07-30 }
+  - { ticker: TIP, asset_class: rates,        description: "US TIPS",                       approx_inception: 2003-12-05 }
+  - { ticker: LQD, asset_class: credit,       description: "Investment-grade corporates",   approx_inception: 2002-07-30 }
+  - { ticker: HYG, asset_class: credit,       description: "High-yield corporates",         approx_inception: 2007-04-11 }
+  - { ticker: GLD, asset_class: commodity,    description: "Gold",                          approx_inception: 2004-11-18 }
+  - { ticker: DBC, asset_class: commodity,    description: "Broad commodities",             approx_inception: 2006-02-06 }
+  - { ticker: VNQ, asset_class: real_estate,  description: "US REITs",                      approx_inception: 2004-09-29 }
+
+fred:
+  base_url: https://api.stlouisfed.org/fred
+  observation_start: 1990-01-01   # enough history for YoY / percentile transforms
+  max_requests_per_minute: 100    # FRED documents a 120/min limit; stay below it
+  page_limit: 100000              # FRED maximum rows per request
+
+# revised: true -> download every ALFRED vintage and use vintage-consistent values.
+# revised: false -> market series that are not revised; use latest values with a lag.
+macro_series:
+  - { id: DGS10,    revised: false, description: "10Y Treasury constant maturity" }
+  - { id: DGS2,     revised: false, description: "2Y Treasury constant maturity" }
+  - { id: DGS3MO,   revised: false, description: "3M Treasury constant maturity (risk-free proxy)" }
+  - { id: T10Y2Y,   revised: false, description: "10Y minus 2Y spread" }
+  - { id: T10Y3M,   revised: false, description: "10Y minus 3M spread" }
+  - { id: BAA10Y,   revised: false, description: "Moody's Baa minus 10Y spread" }
+  - { id: VIXCLS,   revised: false, description: "CBOE VIX close" }
+  - { id: DFF,      revised: false, description: "Effective federal funds rate" }
+  - { id: CPIAUCSL, revised: true,  description: "CPI, all urban consumers, SA" }
+  - { id: UNRATE,   revised: true,  description: "Unemployment rate" }
+  - { id: INDPRO,   revised: true,  description: "Industrial production index" }
+  - { id: NFCI,     revised: true,  description: "Chicago Fed National Financial Conditions Index" }
+
+# Availability rules (PRD §7.3). `available_on` = first session at whose CLOSE a value may be used.
+availability:
+  price_lag_sessions: 0              # bar for session d is usable at the close of d
+  daily_macro_lag_sessions: 1        # FRED daily series for d usable at close of d+1 session
+  revised_macro_lag_sessions: 1      # ALFRED vintage starting on v usable at close of the next session after v
+
+paths:
+  raw: data/raw
+  curated: data/curated
+  features: data/features
+  artifacts: artifacts

@@ -1,0 +1,30 @@
+# Local only. Artefacts are mounted read-only; nothing is trained inside these containers.
+# Ports are bound to 127.0.0.1 so nothing is exposed beyond this machine.
+services:
+  api:
+    build: .
+    command: uvicorn quantxgb.api.main:app --host 0.0.0.0 --port 8000
+    environment:
+      QUANTXGB_ARTIFACTS: /app/artifacts
+    volumes:
+      - ./artifacts:/app/artifacts:ro
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  dashboard:
+    build: .
+    command: streamlit run app/Home.py --server.address 0.0.0.0 --server.port 8501
+    environment:
+      QUANTXGB_ARTIFACTS: /app/artifacts
+    volumes:
+      - ./artifacts:/app/artifacts:ro
+    ports:
+      - "127.0.0.1:8501:8501"
+
+  mlflow:
+    build: .
+    command: mlflow ui --backend-store-uri sqlite:////app/artifacts/mlflow.db --host 0.0.0.0 --port 5000
+    volumes:
+      - ./artifacts:/app/artifacts
+    ports:
+      - "127.0.0.1:5000:5000"

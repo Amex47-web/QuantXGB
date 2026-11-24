@@ -1,0 +1,8 @@
+# Label / timing configuration — PRD §4.3, §4.4, §8.3.
+status: proposed
+
+signal_frequency: weekly     # decision date = last session of each ISO week
+horizon: 20                  # primary forward horizon in sessions (h)
+alt_horizons: [5]            # comparison experiments (set horizon: 5 to run one)
+execution_delay_sessions: 1  # label window starts at t+1 (execution at close of t+1)
+n_grades: 5                  # within-date quantile grades 0..4 for rank:ndcg

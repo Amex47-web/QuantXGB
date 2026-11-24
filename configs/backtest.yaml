@@ -1,0 +1,46 @@
+# Backtest / split configuration — PRD §4.6, §4.7, §10.
+status: proposed
+
+splits:
+  warmup_end: 2008-03-31
+  development: { start: 2008-04-01, end: 2024-09-30 }
+  holdout: { start: 2024-11-01, end: 2026-10-30 }
+
+timing:
+  execution_delay_sessions: 1      # trade at the close of t+1
+  rebalance_every_n_signals: 4     # 4 weekly signals ~ every 4 weeks
+
+costs_bps: [5, 10, 20]             # one-way, on traded notional — stress assumptions, not estimates
+base_cost_bps: 10                  # cost level used for model comparison / PBO
+
+constraints:
+  long_only: true
+  w_max: 0.25
+  asset_class_max: 0.50
+  turnover_max: 0.50               # L1 distance per rebalance
+
+expected_returns:
+  method: grinold                  # mu = IC_bar * sigma_h * z
+  ic_min_history: 26               # past OOS dates with realised labels required, else mu = 0
+  vol_feature: vol_60
+
+optimizer:
+  type: mean_variance              # mean_variance | cvar
+  covariance: ledoit_wolf          # sample | ledoit_wolf | ewma
+  covariance_lookback: 252
+  ewma_halflife: 60
+  risk_aversion: 5.0               # lambda
+  turnover_penalty: 0.001          # gamma
+  cvar_beta: 0.95
+  cvar_kappa: 1.0
+  cvar_scenarios: historical       # historical | quantile_copula
+  n_copula_scenarios: 2000
+
+benchmarks:
+  momentum_top_k: 5
+  sixty_forty: { SPY: 0.6, IEF: 0.4 }
+  market: SPY
+  inverse_vol_feature: vol_60
+
+risk_free_series: DGS3MO           # PIT; 0 is used if macro data is unavailable
+seed: 42

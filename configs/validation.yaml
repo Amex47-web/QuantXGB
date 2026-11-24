@@ -1,0 +1,11 @@
+# Validation configuration — PRD §9.4.
+status: proposed
+
+min_train_years: 5
+test_months: 6
+embargo_sessions: 5          # extra gap on top of purging (purge length = label horizon, per row)
+bootstrap:
+  n_resamples: 2000
+  mean_block_length: 20      # sessions (stationary bootstrap)
+  confidence: 0.95
+ic_newey_west_lags: null     # null -> ceil(horizon / sessions between signals)
