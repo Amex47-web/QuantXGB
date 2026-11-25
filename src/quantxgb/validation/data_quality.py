@@ -84,7 +84,7 @@ class DQReport:
 
     def write(self, path: Path) -> Path:
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(self.to_markdown())
+        path.write_text(self.to_markdown(), encoding="utf-8")
         return path
 
 

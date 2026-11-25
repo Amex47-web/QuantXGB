@@ -60,7 +60,7 @@ def save_dataset(ds: Dataset, fb: FeatureBuild, cfg: AppConfig, data_hash: str) 
         },
         out / "meta.json",
     )
-    (out / "feature_dictionary.md").write_text(render_dictionary(fb.specs))
+    (out / "feature_dictionary.md").write_text(render_dictionary(fb.specs), encoding="utf-8")
     return out
 
 

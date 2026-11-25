@@ -417,7 +417,7 @@ def find_root(start: Path | None = None) -> Path:
 
 
 def _read_yaml(path: Path) -> dict[str, object]:
-    with path.open() as fh:
+    with path.open(encoding="utf-8") as fh:
         loaded = yaml.safe_load(fh)
     if not isinstance(loaded, dict):
         raise ValueError(f"{path} must contain a mapping")

@@ -181,7 +181,7 @@ def evaluate_holdout(
         },
         holdout_lock_path(cfg),
     )
-    with (cfg.artifacts_dir / "holdout" / "history.jsonl").open("a") as fh:
+    with (cfg.artifacts_dir / "holdout" / "history.jsonl").open("a", encoding="utf-8") as fh:
         fh.write(
             json.dumps(
                 {

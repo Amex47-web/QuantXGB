@@ -206,7 +206,7 @@ def test_macro_availability_rules() -> None:
 def test_manifest_records_are_json(tmp_path: Path) -> None:
     store = RawStore(tmp_path)
     store.write("p", "X", pl.DataFrame({"a": [1]}), {"start": dt.date(2020, 1, 1)})
-    line = (tmp_path / "manifest.jsonl").read_text().strip()
+    line = (tmp_path / "manifest.jsonl").read_text(encoding="utf-8").strip()
     assert json.loads(line)["params"]["start"] == "2020-01-01"
 
 

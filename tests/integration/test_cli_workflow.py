@@ -103,7 +103,7 @@ def test_backtest_report_and_score(workflow) -> None:  # type: ignore[no-untyped
     cfg, _, run_dir = workflow
     _backtest(cfg, run_dir)
     assert TrialLog(cfg.artifacts_dir).count("strategy") >= 9
-    report = write_run_report(run_dir).read_text()
+    report = write_run_report(run_dir).read_text(encoding="utf-8")
     for section in (
         "Out-of-sample signal quality",
         "Backtest",
@@ -126,7 +126,9 @@ def test_holdout_is_one_shot(workflow) -> None:  # type: ignore[no-untyped-def]
     with pytest.raises(HoldoutLocked, match="already evaluated"):
         evaluate_holdout(run_dir, ds, store.prices(), store.macro(), cfg)
     evaluate_holdout(run_dir, ds, store.prices(), store.macro(), cfg, override_reason="test rerun")
-    hist = (cfg.artifacts_dir / "holdout" / "history.jsonl").read_text().splitlines()
+    hist = (
+        (cfg.artifacts_dir / "holdout" / "history.jsonl").read_text(encoding="utf-8").splitlines()
+    )
     assert len(hist) == 2 and "test rerun" in hist[1]
 
 

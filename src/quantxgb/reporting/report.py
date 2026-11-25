@@ -188,5 +188,5 @@ def render_backtest(bt: dict[str, Any]) -> list[str]:
 
 def write_run_report(run_dir: Path) -> Path:
     path = run_dir / "report.md"
-    path.write_text(render_run_report(run_dir))
+    path.write_text(render_run_report(run_dir), encoding="utf-8")
     return path

@@ -58,13 +58,13 @@ def write_parquet_atomic(df: pl.DataFrame, path: Path) -> Path:
 def write_json(obj: Any, path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(json.dumps(obj, indent=2, sort_keys=True, default=str))
+    tmp.write_text(json.dumps(obj, indent=2, sort_keys=True, default=str), encoding="utf-8")
     os.replace(tmp, path)
     return path
 
 
 def read_json(path: Path) -> Any:
-    return json.loads(path.read_text())
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def git_sha(root: Path) -> str:

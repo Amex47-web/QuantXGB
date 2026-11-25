@@ -121,7 +121,7 @@ def features_dictionary(config_dir: ConfigOpt = None) -> None:
 
     cfg = _cfg(config_dir)
     path = cfg.root / "research" / "feature_dictionary.md"
-    path.write_text(render_dictionary(all_specs(cfg.features)))
+    path.write_text(render_dictionary(all_specs(cfg.features)), encoding="utf-8")
     console.print(f"[green]→ {path}[/]")
 
 

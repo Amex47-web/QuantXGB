@@ -84,7 +84,7 @@ class RawStore:
             params=params,
         )
         self.manifest.parent.mkdir(parents=True, exist_ok=True)
-        with self.manifest.open("a") as fh:
+        with self.manifest.open("a", encoding="utf-8") as fh:
             fh.write(json.dumps(asdict(rec), default=str) + "\n")
         return rec
 
@@ -92,7 +92,7 @@ class RawStore:
         if not self.manifest.exists():
             return []
         out = []
-        for line in self.manifest.read_text().splitlines():
+        for line in self.manifest.read_text(encoding="utf-8").splitlines():
             if line.strip():
                 out.append(SnapshotRecord(**json.loads(line)))
         return out

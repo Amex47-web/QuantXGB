@@ -120,7 +120,7 @@ class ArtifactStore:
 
     def data_quality_markdown(self) -> str | None:
         p = self.root / "reports" / "data_quality.md"
-        return p.read_text() if p.exists() else None
+        return p.read_text(encoding="utf-8") if p.exists() else None
 
 
 @lru_cache(maxsize=64)
